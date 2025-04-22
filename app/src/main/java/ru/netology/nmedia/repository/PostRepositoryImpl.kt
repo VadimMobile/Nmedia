@@ -48,10 +48,23 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override suspend fun removeById(id: Long) {
-        TODO("Not yet implemented")
+        dao.removeById(id)
     }
 
-    override suspend fun likeById(id: Long) {
-        TODO("Not yet implemented")
+
+
+    override suspend fun likeById(id: Long, isLike: Boolean) {
+        val post = dao.getById(id)
+        if (post != null) {
+            val updatedPost = if (isLike) {
+                post.copy(likes = post.likes + 1)
+            } else {
+                post.copy(likes = maxOf(post.likes - 1, 0))
+            }
+            dao.updateLikes(id, updatedPost.likes)
+        } else {
+            throw UnknownError
+        }
     }
+
 }
