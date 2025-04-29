@@ -1,6 +1,10 @@
 package ru.netology.nmedia.repository
 
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import okhttp3.Dispatcher
 import okio.IOException
 import ru.netology.nmedia.api.*
 import ru.netology.nmedia.dao.PostDao
@@ -13,7 +17,7 @@ import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
-    override val data = dao.getAll().map(List<PostEntity>::toDto)
+    override val data = dao.getAll().map { it.map { it.toDto() } }
 
     override suspend fun getAll() {
         try {
@@ -70,7 +74,11 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
                 } else {
                     post.copy(likes = maxOf(post.likes - 1, 0))
                 }
-                val response = PostsApi.service.likeById(id)
+                val response = if (isLike) {
+                    PostsApi.service.likeById(id) // Для добавления лайка
+                } else {
+                    PostsApi.service.dislikeById(id) // Для снятия лайка
+                }
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
                 }
@@ -84,4 +92,5 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
     }
