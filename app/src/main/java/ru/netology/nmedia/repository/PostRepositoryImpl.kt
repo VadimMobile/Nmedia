@@ -75,9 +75,9 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
                     post.copy(likes = maxOf(post.likes - 1, 0))
                 }
                 val response = if (isLike) {
-                    PostsApi.service.likeById(id) // Для добавления лайка
+                    PostsApi.service.dislikeById(id)
                 } else {
-                    PostsApi.service.dislikeById(id) // Для снятия лайка
+                    PostsApi.service.likeById(id)
                 }
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
@@ -93,4 +93,4 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
-    }
+}
