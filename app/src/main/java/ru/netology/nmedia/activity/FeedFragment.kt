@@ -70,6 +70,10 @@ class FeedFragment : Fragment() {
             binding.emptyText.isVisible = state.empty
         }
 
+        viewModel.newerCount.observe(viewLifecycleOwner){
+            println(it)
+        }
+
         binding.swiperefresh.setOnRefreshListener {
             viewModel.refreshPosts()
         }
