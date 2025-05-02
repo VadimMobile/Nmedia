@@ -82,6 +82,10 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
+        binding.uploadPosts.setOnClickListener {
+            TODO("Обработчик кнопки обновления постов")
+        }
+
         return binding.root
     }
 }
