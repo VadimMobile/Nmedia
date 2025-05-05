@@ -69,11 +69,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         try {
             val post = dao.getById(id)
             if (post != null) {
-                val updatedPost = if (isLike) {
-                    post.copy(likes = post.likes + 1)
-                } else {
-                    post.copy(likes = maxOf(post.likes - 1, 0))
-                }
+                dao.likeById(id)
                 val response = if (isLike) {
                     PostsApi.service.dislikeById(id)
                 } else {
@@ -82,7 +78,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
                 }
-                dao.updateLikes(id, updatedPost.likes)
+                dao.insert(PostEntity.fromDto(response.body() ?: throw ApiError(response.code(), response.message()) ))
             } else {
                 throw UnknownError
             }
@@ -92,5 +88,4 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
-
 }
