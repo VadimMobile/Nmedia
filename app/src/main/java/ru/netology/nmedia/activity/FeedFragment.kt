@@ -83,7 +83,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.uploadPosts.setOnClickListener {
-            TODO("Обработчик кнопки обновления постов")
+            viewModel.refreshPosts()
         }
 
         return binding.root
