@@ -71,7 +71,11 @@ class FeedFragment : Fragment() {
         }
 
         viewModel.newerCount.observe(viewLifecycleOwner){
-            println(it)
+            if (it > 0){
+                View.VISIBLE
+        }else{
+            View.GONE
+            }
         }
 
         binding.swiperefresh.setOnRefreshListener {

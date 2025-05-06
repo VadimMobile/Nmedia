@@ -99,7 +99,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
+            dao.insert(body.toEntity().map { it.copy(uploadPost = 0) })
             emit(body.size)
         }
     }.catch { e -> throw AppError.from(e) }

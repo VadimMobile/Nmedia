@@ -21,7 +21,7 @@ private val empty = Post(
     likedByMe = false,
     likes = 0,
     published = "",
-    uploadPost = false,
+    uploadPost = 0,
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
