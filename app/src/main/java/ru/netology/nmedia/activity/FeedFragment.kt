@@ -72,13 +72,14 @@ class FeedFragment : Fragment() {
 
         viewModel.newerCount.observe(viewLifecycleOwner){
             if (it > 0){
-                View.VISIBLE
+                binding.uploadPosts.visibility = View.VISIBLE
         }else{
-            View.GONE
+                binding.uploadPosts.visibility = View.GONE
             }
         }
 
         binding.swiperefresh.setOnRefreshListener {
+            binding.uploadPosts.visibility = View.GONE
             viewModel.refreshPosts()
         }
 
