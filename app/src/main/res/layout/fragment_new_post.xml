@@ -6,30 +6,78 @@
     android:layout_height="match_parent"
     tools:context=".activity.NewPostFragment">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:paddingBottom="?actionBarSize"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <EditText
         android:id="@+id/edit"
+        tools:text="@tools:sample/lorem[3]"
+        android:padding="@dimen/common_spacing"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="start|top"
         android:inputType="textMultiLine"
-        android:background="@android:color/transparent"
-        />
+        android:background="@android:color/transparent" />
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
+    <FrameLayout
+        android:id="@+id/previewContainer"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
-        />
+        tools:visibility="visible">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/description_post_save"
-        app:srcCompat="@drawable/ic_ok_24dp"
-        app:layout_anchor="@id/bottomAppBar"
-        />
+        <ImageView
+            android:id="@+id/preview"
+            android:adjustViewBounds="true"
+            tools:src="@tools:sample/avatars[2]"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove"
+            android:text="@string/remove_photo"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_height="wrap_content"/>
+
+        </FrameLayout>
+    </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomAppBar"
+        android:background="?colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_gravity="bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/takePhoto"
+            app:iconTint="?colorOnPrimary"
+            android:contentDescription="@string/take_photo"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/baseline_add_a_photo_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pickPhoto"
+            app:iconTint="?colorOnPrimary"
+            android:contentDescription="@string/pick_photo"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/baseline_add_photo_alternate_24" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
