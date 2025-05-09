@@ -21,4 +21,10 @@
     <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
     <string name="channel_remote_name">Уведомления с сервера</string>
     <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="upload_posts">Свежие записи</string>
+    <string name="new_post_button">New Post</string>
+    <string name="take_photo">Take photo</string>
+    <string name="pick_photo">Pick photo</string>
+    <string name="remove_photo">Remove</string>
+    <string name="photo_pick_error">Photo pick error</string>
 </resources>
