@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import okhttp3.Dispatcher
 import ru.netology.nmedia.db.AppDb
@@ -22,7 +21,8 @@ private val empty = Post(
     authorAvatar = "",
     likedByMe = false,
     likes = 0,
-    published = ""
+    published = "",
+    uploadPost = 0,
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -38,6 +38,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
+    val newerCount = data.switchMap {
+        repository.getNewer(it.posts.firstOrNull()?.id ?: 0)
+            .catch { _dataState.postValue(FeedModelState(error = true)) }
+            .asLiveData(Dispatchers.Default)
+    }
     private val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>

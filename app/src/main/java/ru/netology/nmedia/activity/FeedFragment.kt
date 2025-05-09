@@ -68,12 +68,25 @@ class FeedFragment : Fragment() {
             binding.emptyText.isVisible = state.empty
         }
 
+        viewModel.newerCount.observe(viewLifecycleOwner){
+            if (it > 0){
+                binding.uploadPosts.visibility = View.VISIBLE
+        }else{
+                binding.uploadPosts.visibility = View.GONE
+            }
+        }
+
         binding.swiperefresh.setOnRefreshListener {
+            binding.uploadPosts.visibility = View.GONE
             viewModel.refreshPosts()
         }
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+        }
+
+        binding.uploadPosts.setOnClickListener {
+            viewModel.refreshPosts()
         }
 
         return binding.root
