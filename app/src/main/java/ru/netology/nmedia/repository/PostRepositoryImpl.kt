@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+
 import okio.IOException
 import ru.netology.nmedia.api.*
 import ru.netology.nmedia.dao.PostDao
@@ -18,7 +19,7 @@ import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
-    override val data = dao.getAll().map(List<PostEntity>::toDto)
+    override val data = dao.getAll().map { it.map { it.toDto() } }
 
     override suspend fun getAll() {
         try {
@@ -70,16 +71,16 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         try {
             val post = dao.getById(id)
             if (post != null) {
-                val updatedPost = if (isLike) {
-                    post.copy(likes = post.likes + 1)
+                dao.likeById(id)
+                val response = if (isLike) {
+                    PostsApi.service.dislikeById(id)
                 } else {
-                    post.copy(likes = maxOf(post.likes - 1, 0))
+                    PostsApi.service.likeById(id)
                 }
-                val response = PostsApi.service.likeById(id)
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
                 }
-                dao.updateLikes(id, updatedPost.likes)
+                dao.insert(PostEntity.fromDto(response.body() ?: throw ApiError(response.code(), response.message()) ))
             } else {
                 throw UnknownError
             }
@@ -103,4 +104,3 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             emit(body.size)
         }
     }.catch { e -> throw AppError.from(e) }
-}
