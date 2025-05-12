@@ -86,6 +86,10 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
+        binding.attachmentAll.setOnClickListener{
+            findNavController().navigate(R.id.action_feedFragment_to_imageFragment)
+        }
+
         binding.uploadPosts.setOnClickListener {
             viewModel.refreshPosts()
         }
