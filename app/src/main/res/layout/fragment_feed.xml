@@ -20,16 +20,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/attachmentAll"
-            android:layout_width="414dp"
-            android:layout_height="538dp"
-            android:adjustViewBounds="true"
-            tools:layout_editor_absoluteX="-19dp"
-            tools:layout_editor_absoluteY="67dp"
-            tools:src="@tools:sample/avatars[10]"
-            tools:ignore="MissingConstraints" />
-
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"
