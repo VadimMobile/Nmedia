@@ -8,17 +8,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorBlack"
         android:padding="@dimen/common_spacing">
 
         <ImageView
             android:id="@+id/attachmentAll"
-            android:layout_width="414dp"
-            android:layout_height="538dp"
+            android:layout_width="424dp"
+            android:layout_height="888dp"
             android:adjustViewBounds="true"
-            tools:layout_editor_absoluteX="-19dp"
-            tools:layout_editor_absoluteY="67dp"
-            tools:src="@tools:sample/avatars[10]"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints"
+            tools:src="@tools:sample/avatars[10]" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

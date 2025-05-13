@@ -50,17 +50,18 @@ class FeedFragment : Fragment() {
                     type = "text/plain"
                 }
 
-                override fun onImage(image: String) {
-                    val bundle = Bundle().apply {
-                        putString("image", image)
-                    }
-                    findNavController().navigate(R.id.action_feedFragment_to_imageFragment, bundle)
-                }
-
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
             }
+
+            override fun onImage(image: String) {
+                val bundle = Bundle().apply {
+                    putString("image", image)
+                }
+                findNavController().navigate(R.id.action_feedFragment_to_imageFragment, bundle)
+            }
+
         })
         binding.list.adapter = adapter
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
@@ -92,7 +93,6 @@ class FeedFragment : Fragment() {
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
-
 
         binding.uploadPosts.setOnClickListener {
             viewModel.refreshPosts()
