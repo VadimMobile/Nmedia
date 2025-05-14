@@ -1,15 +1,19 @@
 package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.view.load
 import ru.netology.nmedia.view.loadCircleCrop
 
 interface OnInteractionListener {
@@ -17,6 +21,7 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
+    fun onImage(image: String) {}
 }
 
 class PostsAdapter(
@@ -46,7 +51,13 @@ class PostViewHolder(
             avatar.loadCircleCrop("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"
-
+            attachmentImage.visibility = if (post.attachment?.type == AttachmentType.IMAGE) {
+                val url = "${BuildConfig.BASE_URL}/media/${post.attachment.url}"
+                attachmentImage.load(url)
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -65,6 +76,12 @@ class PostViewHolder(
                         }
                     }
                 }.show()
+            }
+
+            attachmentImage.setOnClickListener {
+                post.attachment?.let { attach ->
+                    onInteractionListener.onImage(attach.url)
+                }
             }
 
             like.setOnClickListener {
