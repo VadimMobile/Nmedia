@@ -8,6 +8,11 @@ data class Post(
     val published: String,
     val likedByMe: Boolean,
     val likes: Int = 0,
-    val uploadPost: Int
+    val uploadPost: Int,
+    val attachment: Attachment? = null,
 )
 
+data class Attachment(
+    val url: String,
+    val type: AttachmentType,
+)
