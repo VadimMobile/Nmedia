@@ -80,7 +80,14 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
                 }
-                dao.insert(PostEntity.fromDto(response.body() ?: throw ApiError(response.code(), response.message()) ))
+                dao.insert(
+                    PostEntity.fromDto(
+                        response.body() ?: throw ApiError(
+                            response.code(),
+                            response.message()
+                        )
+                    )
+                )
             } else {
                 throw UnknownError
             }
@@ -92,7 +99,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override fun getNewer(id: Long): Flow<Int> = flow {
-        while (true){
+        while (true) {
             delay(10_000)
             val response = PostsApi.service.getNewer(id)
             if (!response.isSuccessful) {
@@ -104,3 +111,4 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             emit(body.size)
         }
     }.catch { e -> throw AppError.from(e) }
+}
