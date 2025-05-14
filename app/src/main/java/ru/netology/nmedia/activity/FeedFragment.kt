@@ -34,9 +34,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id, isLike = false)
-                viewModel.likeById(post.id, isLike = true)
-
+                viewModel.likeById(post.id, isLike = post.likedByMe)
             }
 
             override fun onRemove(post: Post) {
@@ -80,13 +78,14 @@ class FeedFragment : Fragment() {
 
         viewModel.newerCount.observe(viewLifecycleOwner){
             if (it > 0){
-                View.VISIBLE
+                binding.uploadPosts.visibility = View.VISIBLE
         }else{
-            View.GONE
+                binding.uploadPosts.visibility = View.GONE
             }
         }
 
         binding.swiperefresh.setOnRefreshListener {
+            binding.uploadPosts.visibility = View.GONE
             viewModel.refreshPosts()
         }
 
