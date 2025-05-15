@@ -5,14 +5,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.auth.AuthState
+import ru.netology.nmedia.viewmodel.AuthViewModel
 
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
 
@@ -42,6 +50,33 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         }
 
         checkGoogleApiAvailability()
+
+        val authViewModel by viewModels<AuthViewModel>()
+
+        addMenuProvider(object : MenuProvider{
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_auth, menu)
+                authViewModel.state.observe(this@AppActivity) {
+                    menu.setGroupVisible(R.id.authorized, authViewModel.isAuthenticated)
+                    menu.setGroupVisible(R.id.unauthorized, !authViewModel.isAuthenticated)
+                }
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                when (menuItem.itemId){
+                    R.id.signIn, R.id.signUp ->{
+                        // TODO fix hardcode in HW
+                        AppAuth.getInstance().setAuth(5, "x-token")
+                        true
+                    }
+                    R.id.logout ->{
+                        AppAuth.getInstance().removeAuth()
+                        true
+                    }
+                    else -> false
+                }
+        })
+
     }
 
     private fun requestNotificationsPermission() {

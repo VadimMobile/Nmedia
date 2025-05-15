@@ -26,4 +26,7 @@
     <string name="pick_photo">Pick photo</string>
     <string name="remove_photo">Remove</string>
     <string name="photo_pick_error">Photo pick error</string>
+    <string name="logout">Logout</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
 </resources>
