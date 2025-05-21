@@ -46,6 +46,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     },
                 )
             }
+            .asFlow()
     }
         .asLiveData(Dispatchers.Default)
 

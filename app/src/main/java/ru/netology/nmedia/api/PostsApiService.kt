@@ -64,6 +64,10 @@ interface ApiService {
     @Multipart
     @POST("media")
     suspend fun upload(@Part part: MultipartBody.Part): Media
+
+    @FormUrlEncoded
+    @POST("users/authentication")
+    suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Response<AppAuth>
 }
 
 object PostsApi {
