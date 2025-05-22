@@ -22,3 +22,9 @@ class AuthenticationFragment : Fragment() {
             container,
             false
         )
+
+// TODO Доделать ДЗ
+
+        return binding.root
+    }
+}
