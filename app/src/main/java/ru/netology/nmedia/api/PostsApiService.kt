@@ -1,5 +1,6 @@
 package ru.netology.nmedia.api
 
+import android.media.session.MediaSession
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -11,6 +12,7 @@ import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.Token
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 
@@ -67,7 +69,7 @@ interface ApiService {
 
     @FormUrlEncoded
     @POST("users/authentication")
-    suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Response<AppAuth>
+    suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Token
 }
 
 object PostsApi {

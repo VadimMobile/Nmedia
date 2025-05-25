@@ -6,11 +6,16 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentAuthenticationBinding
+import ru.netology.nmedia.viewmodel.LoginViewModel
 
 class AuthenticationFragment : Fragment() {
+
+    private val viewModel: LoginViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,8 +28,14 @@ class AuthenticationFragment : Fragment() {
             false
         )
 
-// TODO Доделать ДЗ
+        binding.signIn.setOnClickListener {
+            binding.login
+        }
 
-        return binding.root
+        viewModel.success.observe(viewLifecycleOwner) {
+            findNavController().navigateUp()
+        }
+
+            return binding.root
     }
 }
