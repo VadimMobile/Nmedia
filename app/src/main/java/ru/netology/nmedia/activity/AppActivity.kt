@@ -64,8 +64,12 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId){
-                    R.id.signIn, R.id.signUp ->{
-                        R.id.action_authenticationFragment_to_feedFragment
+                    R.id.signIn -> {
+                        findNavController(R.id.nav_host_fragment)
+                            .navigate(R.id.authenticationFragment)
+                        true
+                    }
+                    R.id.signUp -> {
                         AppAuth.getInstance().setAuth(5, "x-token")
                         true
                     }
