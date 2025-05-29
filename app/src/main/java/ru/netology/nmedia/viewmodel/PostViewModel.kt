@@ -30,10 +30,10 @@ private val empty = Post(
     uploadPost = 0,
 )
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    // упрощённый вариант
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
+class PostViewModel(
+    private val repository: PostRepository,
+    appAuth: AppAuth,
+) : ViewModel(application) {
 
     val data: LiveData<FeedModel> = AppAuth.getInstance().authState
         .flatMapLatest { authState ->

@@ -6,10 +6,12 @@ import androidx.lifecycle.asLiveData
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.auth.AuthState
 
-class AuthViewModel: ViewModel() {
-    val state: LiveData<AuthState?> = AppAuth.getInstance()
+class AuthViewModel(
+    private val appAuth: AppAuth,
+): ViewModel() {
+    val state: LiveData<AuthState?> = appAuth
         .authState.asLiveData()
 
     val isAuthenticated: Boolean
-        get() = AppAuth.getInstance().authState.value != null
+        get() =appAuth.authStateFlow.value.id != 0L
 }

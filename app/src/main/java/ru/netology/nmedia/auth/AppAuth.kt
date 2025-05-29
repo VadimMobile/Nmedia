@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AppAuth private constructor(context: Context) {
+class AppAuth(context: Context) {
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
     private val _authState = MutableStateFlow<AuthState?>(null)
     val authState: StateFlow<AuthState?> = _authState.asStateFlow()
@@ -40,25 +40,6 @@ class AppAuth private constructor(context: Context) {
         prefs.edit() {clear()}
     }
 
-    companion object {
-
-        private var INSTANCE: AppAuth? = null
-        private const val TOKEN_KEY = "token"
-        private const val ID_KEY = "id"
-
-
-        fun getInstance(): AppAuth = synchronized(this) {
-            checkNotNull(INSTANCE) {
-                "You must call initApp before getInstance"
-            }
-        }
-
-        fun initApp(context: Context): AppAuth = INSTANCE ?: synchronized(this) {
-            INSTANCE ?: AppAuth(context).also {
-                INSTANCE = it
-            }
-        }
-
-    }
-
 }
+
+data class AuthState(val id: Long = 0, val token: String? = null)
