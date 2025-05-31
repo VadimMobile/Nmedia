@@ -8,10 +8,10 @@ import ru.netology.nmedia.auth.AuthState
 
 class AuthViewModel(
     private val appAuth: AppAuth,
-): ViewModel() {
+) : ViewModel() {
     val state: LiveData<AuthState?> = appAuth
         .authState.asLiveData()
 
     val isAuthenticated: Boolean
-        get() =appAuth.authStateFlow.value.id != 0L
+        get() = (appAuth.authState.value?.userId ?: 0L) != 0L
 }

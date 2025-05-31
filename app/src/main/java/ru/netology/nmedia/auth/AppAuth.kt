@@ -2,12 +2,16 @@ package ru.netology.nmedia.auth
 
 import android.content.Context
 import androidx.core.content.edit
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AppAuth(context: Context) {
+    companion object {
+        const val TOKEN_KEY = "TOKEN_KEY"
+        const val ID_KEY = "ID_KEY"
+    }
+
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
     private val _authState = MutableStateFlow<AuthState?>(null)
     val authState: StateFlow<AuthState?> = _authState.asStateFlow()
@@ -41,5 +45,3 @@ class AppAuth(context: Context) {
     }
 
 }
-
-data class AuthState(val id: Long = 0, val token: String? = null)

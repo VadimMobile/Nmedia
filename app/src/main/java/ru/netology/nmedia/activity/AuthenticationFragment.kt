@@ -2,17 +2,12 @@ package ru.netology.nmedia.activity
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.NonCancellable.message
-import ru.netology.nmedia.R
-import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentAuthenticationBinding
 import ru.netology.nmedia.viewmodel.LoginViewModel
 
@@ -20,7 +15,6 @@ import ru.netology.nmedia.viewmodel.LoginViewModel
 class AuthenticationFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
-    val progressBar: ProgressBar = findViewById(R.id.progress_bar)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,11 +38,12 @@ class AuthenticationFragment : Fragment() {
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
-        viewModel.message.observe(viewLifecycleOwner) { message ->
-            message ?: return@observe
-            Snackbar
-                .make(binding.root, message, Snackbar.LENGTH_LONG)
-                .show()
+        viewModel.error.observe(viewLifecycleOwner) { isError ->
+            if (isError) {
+                Snackbar.make(binding.root, "Ошибка входа", Snackbar.LENGTH_LONG)
+                    .show()
+                viewModel.onErrorShown()
+            }
         }
 
         viewModel.success.observe(viewLifecycleOwner) { success ->
@@ -56,6 +51,6 @@ class AuthenticationFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
-            return binding.root
+        return binding.root
     }
 }

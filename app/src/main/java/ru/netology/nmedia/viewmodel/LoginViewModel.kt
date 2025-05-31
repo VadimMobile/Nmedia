@@ -7,8 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.api.PostsApi
-import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.di.DependencyContainer
 
 class LoginViewModel : ViewModel() {
     private val _loading = MutableStateFlow(false)
@@ -17,15 +16,17 @@ class LoginViewModel : ViewModel() {
     private val _error = MutableStateFlow(false)
     val error: LiveData<Boolean> = _error.asLiveData()
 
-    val success: LiveData<Boolean> = AppAuth.getInstance().authState.map { it != null }
+    private val container = DependencyContainer.getInstance()
+
+    val success: LiveData<Boolean> = container.appAuth.authState.map { it != null }
         .asLiveData()
 
     fun login(login: String, password: String) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val (id, token) = PostsApi.service.updateUser(login, password)
-                AppAuth.getInstance().setAuth(id, token)
+                val (id, token) = container.apiService.updateUser(login, password)
+                container.appAuth.setAuth(id, token)
             } catch (_: Exception) {
                 _error.value = true
             } finally {

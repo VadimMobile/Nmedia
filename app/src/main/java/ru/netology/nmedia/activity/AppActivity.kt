@@ -58,14 +58,12 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
 
         checkGoogleApiAvailability()
 
-        val authViewModel by viewModels<AuthViewModel>()
-
         addMenuProvider(object : MenuProvider{
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_auth, menu)
-                authViewModel.state.observe(this@AppActivity) {
-                    menu.setGroupVisible(R.id.authorized, authViewModel.isAuthenticated)
-                    menu.setGroupVisible(R.id.unauthorized, !authViewModel.isAuthenticated)
+                viewModel.state.observe(this@AppActivity) {
+                    menu.setGroupVisible(R.id.authorized, viewModel.isAuthenticated)
+                    menu.setGroupVisible(R.id.unauthorized, !viewModel.isAuthenticated)
                 }
             }
 
@@ -77,11 +75,11 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                         true
                     }
                     R.id.signUp -> {
-                        dependencyContainer.appAuth.getInstance().setAuth(5, "x-token")
+                        dependencyContainer.appAuth.setAuth(5, "x-token")
                         true
                     }
                     R.id.logout ->{
-                        dependencyContainer.appAuth.getInstance().removeAuth()
+                        dependencyContainer.appAuth.removeAuth()
                         true
                     }
                     else -> false

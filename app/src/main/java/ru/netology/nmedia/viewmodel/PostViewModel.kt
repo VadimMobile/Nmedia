@@ -1,20 +1,24 @@
 package ru.netology.nmedia.viewmodel
 
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
 
@@ -33,21 +37,20 @@ private val empty = Post(
 class PostViewModel(
     private val repository: PostRepository,
     appAuth: AppAuth,
-) : ViewModel(application) {
+) : ViewModel() {
 
-    val data: LiveData<FeedModel> = AppAuth.getInstance().authState
+    val data: LiveData<FeedModel> = appAuth.authState
         .flatMapLatest { authState ->
-        repository.data
-            .map {
-                posts ->
-                FeedModel(
-                    posts.map {
-                        it.copy(ownedByMe = authState?.userId == it.authorId)
-                    },
-                )
-            }
-            .asFlow()
-    }
+            repository.data
+                .map { posts ->
+                    FeedModel(
+                        posts.map {
+                            it.copy(ownedByMe = authState?.userId == it.authorId)
+                        },
+                    )
+                }
+                .asFlow()
+        }
         .asLiveData(Dispatchers.Default)
 
     private val _dataState = MutableLiveData<FeedModelState>()
@@ -72,11 +75,11 @@ class PostViewModel(
         loadPosts()
     }
 
-    fun changePhoto(uri: Uri, file: File){
+    fun changePhoto(uri: Uri, file: File) {
         _photo.value = PhotoModel(uri, file)
     }
 
-    fun removePhoto(){
+    fun removePhoto() {
         _photo.value = null
     }
 
@@ -133,7 +136,7 @@ class PostViewModel(
         viewModelScope.launch {
             try {
                 repository.likeById(id, isLike)
-            }  catch (_: Exception) {
+            } catch (_: Exception) {
             }
         }
     }
