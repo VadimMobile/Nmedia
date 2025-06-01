@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.di.DependencyContainer
 
 class LoginViewModel : ViewModel() {
     private val _loading = MutableStateFlow(false)

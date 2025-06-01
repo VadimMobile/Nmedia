@@ -5,8 +5,11 @@ import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AppAuth(context: Context) {
+@Singleton
+class AppAuth @Inject constructor(context: Context) {
     companion object {
         const val TOKEN_KEY = "TOKEN_KEY"
         const val ID_KEY = "ID_KEY"
