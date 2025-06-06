@@ -2,6 +2,7 @@ package ru.netology.nmedia.auth
 
 import android.content.Context
 import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppAuth @Inject constructor(context: Context) {
+class AppAuth @Inject constructor(@ApplicationContext context: Context) {
     companion object {
         const val TOKEN_KEY = "TOKEN_KEY"
         const val ID_KEY = "ID_KEY"
@@ -42,9 +43,9 @@ class AppAuth @Inject constructor(context: Context) {
     }
 
     @Synchronized
-    fun removeAuth(){
+    fun removeAuth() {
         _authState.value = null
-        prefs.edit() {clear()}
+        prefs.edit() { clear() }
     }
 
 }
