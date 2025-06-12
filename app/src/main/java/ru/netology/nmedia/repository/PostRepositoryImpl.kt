@@ -109,26 +109,16 @@ class PostRepositoryImpl @Inject constructor(
         try {
             val post = dao.getById(id)
             if (post != null) {
-                dao.likeById(id)
-                val response = if (isLike) {
-                    PostsApi.service.dislikeById(id)
+                val updatedPost = if (isLike) {
+                    post.copy(likes = post.likes + 1)
                 } else {
-                    PostsApi.service.likeById(id)
+                    post.copy(likes = maxOf(post.likes - 1, 0))
                 }
-
                 val response = apiService.likeById(id)
-
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
                 }
-                dao.insert(
-                    PostEntity.fromDto(
-                        response.body() ?: throw ApiError(
-                            response.code(),
-                            response.message()
-                        )
-                    )
-                )
+                dao.updateLikes(id, updatedPost.likes)
             } else {
                 throw UnknownError
             }
@@ -140,7 +130,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override fun getNewer(id: Long): Flow<Int> = flow {
-        while (true) {
+        while (true){
             delay(10_000)
             val response = apiService.getNewer(id)
             if (!response.isSuccessful) {
@@ -148,7 +138,7 @@ class PostRepositoryImpl @Inject constructor(
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insertSecondary(body.toEntity().map { it.copy(uploadPost = 1) })
+            dao.insert(body.toEntity().map { it.copy(uploadPost = 0) })
             emit(body.size)
         }
     }.catch { e -> throw AppError.from(e) }
