@@ -1,26 +1,36 @@
 package ru.netology.nmedia.viewmodel
 
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
-import ru.netology.nmedia.db.AppDb
+
+import ru.netology.nmedia.auth.AppAuth
+
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
 import java.io.File
+import javax.inject.Inject
 
 private val empty = Post(
     id = 0,
     content = "",
     author = "",
+    authorId = 0,
     authorAvatar = "",
     likedByMe = false,
     likes = 0,
@@ -28,15 +38,26 @@ private val empty = Post(
     uploadPost = 0,
 )
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    // упрощённый вариант
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
+@HiltViewModel
+class PostViewModel @Inject constructor(
+    private val repository: PostRepository,
+    appAuth: AppAuth,
+) : ViewModel() {
 
-    val data: LiveData<FeedModel> =
-        repository.data.map { FeedModel(it, it.isEmpty()) }
-            .catch { it.printStackTrace() }
-            .asLiveData(Dispatchers.Default)
+    val data: LiveData<FeedModel> = appAuth.authState
+        .flatMapLatest { authState ->
+            repository.data
+                .map { posts ->
+                    FeedModel(
+                        posts.map {
+                            it.copy(ownedByMe = authState?.userId == it.authorId)
+                        },
+                    )
+                }
+                .asFlow()
+        }
+        .asLiveData(Dispatchers.Default)
+
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
@@ -59,11 +80,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         loadPosts()
     }
 
-    fun changePhoto(uri: Uri, file: File){
+    fun changePhoto(uri: Uri, file: File) {
         _photo.value = PhotoModel(uri, file)
     }
 
-    fun removePhoto(){
+    fun removePhoto() {
         _photo.value = null
     }
 
