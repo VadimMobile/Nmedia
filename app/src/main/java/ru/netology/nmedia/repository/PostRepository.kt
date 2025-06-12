@@ -9,6 +9,7 @@ import java.io.File
 interface PostRepository {
     val data: LiveData<List<Post>>
     fun getNewer(id: Long): Flow<Int>
+
     suspend fun getAll()
     suspend fun save(post: Post)
     suspend fun save(post: Post, file: File)
