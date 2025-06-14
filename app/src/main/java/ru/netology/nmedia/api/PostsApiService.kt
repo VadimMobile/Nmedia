@@ -10,6 +10,8 @@ import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.Token
+
 //import ru.netology.nmedia.dto.PushToken
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
@@ -32,11 +34,9 @@ interface ApiService {
    // @POST("users/push-tokens")
     //suspend fun save(@Body pushToken: PushToken): Response<Unit>
 
-    @GET("posts")
-    suspend fun getAll(): Response<List<Post>>
-
-    @GET("posts/{id}/newer")
-    suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
+   @FormUrlEncoded
+   @POST("users/authentication")
+   suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Token
 
     @GET("posts/{id}/before")
     suspend fun getBefore(

@@ -84,13 +84,13 @@ class FeedFragment : Fragment() {
             }
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner){
-            if (it > 0){
-                binding.uploadPosts.visibility = View.VISIBLE
-        }else{
-                binding.uploadPosts.visibility = View.GONE
-            }
-        }
+//        viewModel.newerCount.observe(viewLifecycleOwner){
+//            if (it > 0){
+//                binding.uploadPosts.visibility = View.VISIBLE
+//        }else{
+//                binding.uploadPosts.visibility = View.GONE
+//            }
+//        }
 
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest {

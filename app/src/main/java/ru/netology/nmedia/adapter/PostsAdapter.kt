@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -61,7 +62,7 @@ class PostViewHolder(
                 View.GONE
             }
 
-            menu.isInvisible = post.ownedByMe
+            menu.isVisible = post.ownedByMe
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {

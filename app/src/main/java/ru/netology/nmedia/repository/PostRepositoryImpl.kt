@@ -40,21 +40,6 @@ class PostRepositoryImpl @Inject constructor(
         }
     ).flow
 
-    override suspend fun getAll() {
-        try {
-            val response = apiService.getAll()
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
 
     override suspend fun save(post: Post) {
         try {
@@ -75,7 +60,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun save(post: Post, file: File) {
         try {
 
-            val media = upload(file)
+            val media = upload(MediaUpload(file))
 
             val response = apiService.save(post.copy(
                 attachment = Attachment(
@@ -153,17 +138,4 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getNewer(id: Long): Flow<Int> = flow {
-        while (true){
-            delay(10_000)
-            val response = apiService.getNewer(id)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity().map { it.copy(uploadPost = 0) })
-            emit(body.size)
-        }
-    }.catch { e -> throw AppError.from(e) }
 }
