@@ -1,6 +1,8 @@
 package ru.netology.nmedia.repository
 
 import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -13,6 +15,7 @@ import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Media
+import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toDto
@@ -28,23 +31,15 @@ class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
     private val apiService: ApiService,
 ) : PostRepository {
-    override val data = dao.getAll().map(List<PostEntity>::toDto)
-
-    override suspend fun getAll() {
-        try {
-            val response = apiService.getAll()
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = {
+            PostPagingSource(
+                apiService
+            )
         }
-    }
+    ).flow
+
 
     override suspend fun save(post: Post) {
         try {
@@ -65,7 +60,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun save(post: Post, file: File) {
         try {
 
-            val media = upload(file)
+            val media = upload(MediaUpload(file))
 
             val response = apiService.save(post.copy(
                 attachment = Attachment(
@@ -85,10 +80,24 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun upload(file: File): Media =
-        apiService.upload(
-            MultipartBody.Part.createFormData("file", file.name, file.asRequestBody())
-        )
+    override suspend fun upload(upload: MediaUpload): Media {
+        try {
+            val media = MultipartBody.Part.createFormData(
+                "file", upload.file.name, upload.file.asRequestBody()
+            )
+
+            val response = apiService.upload(media)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
 
 
     override suspend fun removeById(id: Long) {
@@ -129,17 +138,4 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getNewer(id: Long): Flow<Int> = flow {
-        while (true){
-            delay(10_000)
-            val response = apiService.getNewer(id)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity().map { it.copy(uploadPost = 0) })
-            emit(body.size)
-        }
-    }.catch { e -> throw AppError.from(e) }
 }
