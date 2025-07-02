@@ -33,7 +33,7 @@ import java.io.File
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
-    private val dao: PostDao,
+    private val postDao: PostDao,
     private val apiService: ApiService,
     postRemoteKeyDao: PostRemoteKeyDao,
     appDb: AppDb,
@@ -64,7 +64,7 @@ class PostRepositoryImpl @Inject constructor(
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -87,7 +87,7 @@ class PostRepositoryImpl @Inject constructor(
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -121,7 +121,7 @@ class PostRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            dao.removeById(id)
+            postDao.removeById(id)
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -131,7 +131,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun likeById(id: Long, isLike: Boolean) {
         try {
-            val post = dao.getById(id)
+            val post = postDao.getById(id)
             if (post != null) {
                 val updatedPost = if (isLike) {
                     post.copy(likes = post.likes + 1)
@@ -142,7 +142,7 @@ class PostRepositoryImpl @Inject constructor(
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
                 }
-                dao.updateLikes(id, updatedPost.likes)
+                postDao.updateLikes(id, updatedPost.likes)
             } else {
                 throw UnknownError
             }
