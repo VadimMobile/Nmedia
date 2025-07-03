@@ -28,7 +28,7 @@ class PostRemoteMediator(
         try {
             val response = when (loadType) {
                 LoadType.REFRESH -> {
-                    val lastPostId = postRemoteKeyDao.min()
+                    val lastPostId = postRemoteKeyDao.max()
                     if (lastPostId != null) {
                         service.getAfter(lastPostId, state.config.pageSize)
                     } else {
@@ -39,7 +39,7 @@ class PostRemoteMediator(
                     return MediatorResult.Success(false)
                 }
                 LoadType.APPEND -> {
-                    val firstPostId = postRemoteKeyDao.max()
+                    val firstPostId = postRemoteKeyDao.min()
                     if (firstPostId != null) {
                         service.getBefore(firstPostId, state.config.pageSize)
                     } else {
