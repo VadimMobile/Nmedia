@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
 
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.FeedItem
 
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
@@ -50,7 +51,7 @@ class PostViewModel @Inject constructor(
     appAuth: AppAuth,
 ) : ViewModel() {
 
-    val data: Flow<PagingData<Post>> = appAuth.authState
+    val data: Flow<PagingData<FeedItem>> = appAuth.authState
         .flatMapLatest { authState ->
             repository.data
                 .map { posts ->
