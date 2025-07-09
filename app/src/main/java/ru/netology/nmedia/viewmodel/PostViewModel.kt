@@ -54,12 +54,13 @@ class PostViewModel @Inject constructor(
     val data: Flow<PagingData<FeedItem>> = appAuth.authState
         .flatMapLatest { authState ->
             repository.data
-                .map { posts ->
-                        posts.map {
-                            it.copy(ownedByMe = authState?.userId == it.authorId) }
+                .map { feedItems ->
+                    feedItems.map {
+                        if (it is Post) it.copy(ownedByMe = authState?.userId == it.authorId)
+                        else it
+                    }
                 }
         }.flowOn(Dispatchers.Default)
-
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState

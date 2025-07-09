@@ -30,6 +30,7 @@ interface OnInteractionListener {
 class PostsAdapter(
     private val onInteractionListener: OnInteractionListener,
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(PostDiffCallback()) {
+
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
             is Ad -> R.layout.card_ad
@@ -55,16 +56,16 @@ class PostsAdapter(
 
             else -> error("unknown view type: $viewType")
         }
-}
 
-override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-    when (val item = getItem(position)) {
-        is Ad -> (holder as? AdViewHolder)?.bind(item)
-        is Post -> (holder as? PostViewHolder)?.bind(item)
-        null -> error("unknown item type")
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val item = getItem(position)) {
+            is Ad -> (holder as? AdViewHolder)?.bind(item)
+            is Post -> (holder as? PostViewHolder)?.bind(item)
+            null -> error("unknown item type")
+        }
     }
 }
-
 class AdViewHolder(
     private val binding: CardAdBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
